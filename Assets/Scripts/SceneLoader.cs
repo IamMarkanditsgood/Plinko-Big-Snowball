@@ -7,9 +7,10 @@ using UnityEngine.UI;
 
 public class Loader : MonoBehaviour
 {
-    [SerializeField] Image image;
-    [SerializeField] TMP_Text _procent;
+    [SerializeField] private Image image;
+    [SerializeField] private TMP_Text _procent;
     [SerializeField] private int sceneIndexToLoad;
+    [SerializeField] private Sprite[] animationFrames;
 
     private void Start()
     {
@@ -19,26 +20,35 @@ public class Loader : MonoBehaviour
     private IEnumerator LoadSceneAsync(int sceneIndex)
     {
         AsyncOperation operation = SceneManager.LoadSceneAsync(sceneIndex);
-        operation.allowSceneActivation = true;
+        operation.allowSceneActivation = false;
 
-        while (!operation.isDone)
+        while (operation.progress < 0.9f)
         {
             float progress = Mathf.Clamp01(operation.progress / 0.9f);
 
-            // Обновление текста с процентом
+            // Обновление текста с процентами
             if (_procent != null)
             {
                 _procent.text = $"{(int)(progress * 100)}%";
             }
 
-            // Масштабирование от 1 до 5 по X
-            if (image != null)
+            // Обновление анимации (спрайта)
+            if (animationFrames != null && animationFrames.Length > 0)
             {
-                float scale = Mathf.Lerp(1f, 3f, progress);
-                image.transform.localScale = new Vector3(scale, scale, 1f);
+                int frameIndex = Mathf.Clamp((int)(progress * animationFrames.Length), 0, animationFrames.Length - 1);
+                image.sprite = animationFrames[frameIndex];
             }
 
             yield return null;
         }
+
+        // Обновляем на финальный кадр и 100% после 0.9
+        _procent.text = "100%";
+        image.sprite = animationFrames[animationFrames.Length - 1];
+
+        // Небольшая пауза (по желанию)
+        yield return new WaitForSeconds(0.3f);
+
+        operation.allowSceneActivation = true;
     }
 }

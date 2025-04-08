@@ -17,6 +17,7 @@ public class HomeScreen : MonoBehaviour
     [SerializeField] private Button _rulesButton;
 
     [SerializeField] private GameObject _gameScreen;
+    [SerializeField] private GameObject _gameScene;
     [SerializeField] private GameObject _settings;
     [SerializeField] private GameObject _rules;
     [SerializeField] private GameObject _view;
@@ -25,9 +26,9 @@ public class HomeScreen : MonoBehaviour
 
     private void OnEnable()
     {
-        _ballSize.text = PlayerPrefs.GetInt("RecordBallSize").ToString();
-        _recordDistance.text = PlayerPrefs.GetInt("RecordDistance") + "m";
-        _recordSpeed.text = PlayerPrefs.GetInt("RecordSpeed") + "m/s";
+        _ballSize.text = PlayerPrefs.GetFloat("RecordBallSize").ToString("F2"); ;
+        _recordDistance.text = PlayerPrefs.GetFloat("RecordDistance") + "m";
+        _recordSpeed.text = PlayerPrefs.GetFloat("RecordSpeed").ToString("F2") + "m/s";
 
         _name.text = PlayerPrefs.GetString("Name", "User Name");
 
@@ -35,6 +36,7 @@ public class HomeScreen : MonoBehaviour
     }
     private void Start()
     {
+        Time.timeScale = 1f;
         _playButton.onClick.AddListener(PlayGame);
         _settingsButton.onClick.AddListener(Settings);
         _rulesButton.onClick.AddListener(Rules);
@@ -51,6 +53,7 @@ public class HomeScreen : MonoBehaviour
     {
         _gameScreen.SetActive(true);
         _view.SetActive(false);
+        _gameScene.SetActive(true);
     }
     private void Settings()
     {
